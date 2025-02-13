@@ -17,6 +17,8 @@ import java.util.zip.ZipFile;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
 import jakarta.json.Json;
@@ -33,37 +35,26 @@ public class Dataloader implements CommandLineRunner {
   @Autowired
   private MovieService movieSvc;
 
+  @Autowired
+  private JdbcTemplate sqlTemplate;
+
   //TODO: Task 2
   @Override
   public void run(String... args) {
     // Determine if data has been loaded - zip file
     Set<String> ids = new HashSet<>();
-    Map<String, String> keyType = new HashMap<>();
-    keyType.put("title", "STRING");
-    keyType.put("vote_average", "NUMBER");
-    keyType.put("vote_count", "NUMBER");
-    keyType.put("status", "STRING");
-    keyType.put("release_date", "STRING");
-    keyType.put("revenue", "NUMBER");
-    keyType.put("runtime", "NUMBER");
-    keyType.put("budget", "NUMBER");
-    keyType.put("imdb_id", "STRING");
-    keyType.put("original_language", "STRING");
-    keyType.put("overview", "STRING");
-    keyType.put("popularity", "NUMBER");
-    keyType.put("tagline", "STRING");
-    keyType.put("genres", "STRING");
-    keyType.put("spoken_languages", "STRING");
-    keyType.put("casts", "STRING");
-    keyType.put("director", "STRING");
-    keyType.put("imdb_rating", "NUMBER");
-    keyType.put("imdb_votes", "NUMBER");
-    keyType.put("poster", "STRING");
+    Map<String, String> keyType = getKeyTypes();
+    
     if((args.length <= 0))
       return;
+
+    SqlRowSet rs = sqlTemplate.queryForRowSet("SELECT * FROM imdb");
+    if(rs.next())
+      return;
+
     System.out.println(">>> Command line started");
     System.out.println(">>> " + args[0]);
-    Path p = Paths.get("../" + args[0]);
+    Path p = Paths.get(args[0]);
     try {
       ZipFile zFile = new ZipFile(p.toFile());
       System.out.println(">>> Zipfile entry: " + zFile.entries());
@@ -135,6 +126,29 @@ public class Dataloader implements CommandLineRunner {
     
   }
 
-
+  private Map<String, String> getKeyTypes() {
+    Map<String, String> keyType = new HashMap<>();
+    keyType.put("title", "STRING");
+    keyType.put("vote_average", "NUMBER");
+    keyType.put("vote_count", "NUMBER");
+    keyType.put("status", "STRING");
+    keyType.put("release_date", "STRING");
+    keyType.put("revenue", "NUMBER");
+    keyType.put("runtime", "NUMBER");
+    keyType.put("budget", "NUMBER");
+    keyType.put("imdb_id", "STRING");
+    keyType.put("original_language", "STRING");
+    keyType.put("overview", "STRING");
+    keyType.put("popularity", "NUMBER");
+    keyType.put("tagline", "STRING");
+    keyType.put("genres", "STRING");
+    keyType.put("spoken_languages", "STRING");
+    keyType.put("casts", "STRING");
+    keyType.put("director", "STRING");
+    keyType.put("imdb_rating", "NUMBER");
+    keyType.put("imdb_votes", "NUMBER");
+    keyType.put("poster", "STRING");
+    return keyType;
+  }
 
 }

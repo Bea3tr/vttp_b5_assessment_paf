@@ -1,20 +1,17 @@
 package vttp.batch5.paf.movies.repositories;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.AccumulatorOperators;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.BasicDBObject;
 
-import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 
@@ -90,14 +87,6 @@ public class MongoMovieRepository {
  //
  //    native MongoDB query here
  /*
-  * db.imdb.aggregate([
-    { $match: { directors: <director_name> } },
-    { $project: {
-        director_name: '$directors',
-        movies_count: { $sum: 1 }
-    }  }
-    ])
-
     db.imdb.aggregate([
     { $group: {
         _id: '$directors',
@@ -111,23 +100,9 @@ public class MongoMovieRepository {
         .count().as("movies_count")
         .push("_id").as("imdb_ids");
 
-    // List<Document> result = new LinkedList<>();
-    // List<String> directors = template.findDistinct(new Query(), "directors", "imdb", String.class);
-
-    // ProjectionOperation projectFields = Aggregation.project()
-    //     .and("directors").as("director_name")
-    //     .and("total").as("movies_count"); 
-
-    // for(String dir : directors) {
-    //     if(dir.equals(""))
-    //         continue;
-    //     MatchOperation matchByDirector = Aggregation.match(Criteria.where("directors").regex(dir, "i"));
-    //     Aggregation pipeline= Aggregation.newAggregation(matchByDirector, projectFields);
-    //     Document doc = template.aggregate(pipeline, "imdb", Document.class).getUniqueMappedResult();
-    //     result.add(doc);
-    // }
-
-    return template.aggregate(Aggregation.newAggregation(groupByDirectors), "imdb", Document.class).getMappedResults();
+    List<Document> results = template.aggregate(Aggregation.newAggregation(groupByDirectors), "imdb", Document.class).getMappedResults();
+    System.out.println(">>> " + results);
+    return results;
     }
     
     

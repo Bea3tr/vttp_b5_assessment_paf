@@ -24,7 +24,7 @@ public class MySQLMovieRepository {
       """;
 
   public static final String SELECT_DIRECTORS = """
-      SELECT revenue, budget FROM imdb WHERE imdb_rating = ?
+      SELECT revenue, budget FROM imdb WHERE imdb_id = ?
       """;
 
   // TODO: Task 2.3
