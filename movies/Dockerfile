@@ -7,7 +7,6 @@ COPY mvnw .
 COPY pom.xml .
 COPY src src
 COPY .mvn .mvn
-COPY ../data data
 
 RUN chmod a+x ./mvnw && ./mvnw package -Dmaven.test.skip=true
 
